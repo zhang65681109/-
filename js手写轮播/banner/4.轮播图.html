@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            position: relative;
+            width: 613px;
+            height: 230px;
+            /* border: 1px solid red; */
+            margin: 50px auto;
+            overflow: hidden;
+        }
+
+        ul {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 600%;
+            height: 100%;
+            list-style: none;
+        }
+
+        li {
+            width: 16.666667%;
+            height: 100%;
+            float: left;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .box2 {
+            text-align: center;
+        }
+
+        .lin {
+            position: absolute;
+            right: 20px;
+            bottom: 10px;
+        }
+
+        span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50px;
+            background-color: grey;
+            border: 2px solid transparent;
+            margin-left: 4px;
+            background-clip: content-box;
+        }
+
+        span.active {
+            width: 6px;
+            height: 6px;
+            border-radius: 50px;
+            background-color: white;
+            border: 2px solid gray;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <ul>
+            <li><img src="banner/m1.jpg"></li>
+            <li><img src="banner/m2.jpg"></li>
+            <li><img src="banner/m3.jpg"></li>
+            <li><img src="banner/m4.jpg"></li>
+            <li><img src="banner/m5.jpg"></li>
+            <li><img src="banner/m1.jpg"></li>
+        </ul>
+        <div class="lin">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="box2">
+        <button>上一张</button>
+        <button>下一张</button>
+    </div>
+    <script>
+        var timer = null
+        var btn1 = document.querySelectorAll('button')[1];
+        var btn2 = document.querySelectorAll('button')[0];
+        var ulEle = document.querySelectorAll('ul')[0];
+        var lis = document.querySelectorAll('li');
+        var liw = lis[0].offsetWidth;//获取li的宽度
+        var dots = document.querySelectorAll('span');
+        var lin = document.querySelectorAll('.lin')[0];
+
+        var count = 0;
+        var tc = null
+        auto()  //自动播放
+        function auto() {
+         
+            tc = setInterval(function () {
+                if (count == lis.length - 1) {
+                    ulEle.style.left = '0px';
+                    count = 0;
+
+
+                }
+                count++;
+                console.log(count)
+                for (var i = 0; i < dots.length; i++) {
+
+                    dots[i].classList.remove('active')
+                    // dots[count].classList.add('active');
+
+                    if (count == dots.length) {
+                        // dots[0].classList.remove('active')
+                        // dots[i].classList.remove('active')
+                        dots[0].classList.add('active');
+
+                    } else {
+                        dots[count].classList.add('active');
+                    }
+                }
+
+
+
+                way(ulEle, -liw * count)
+            }, 3000)
+
+        }
+
+        //点击切换下一张
+        btn1.onclick = function () {
+            // clearInterval(tc);
+            if (count == lis.length - 1) {
+                ulEle.style.left = '0px';
+                count = 0;
+
+
+            }
+            count++;
+            console.log(count)
+            for (var i = 0; i < dots.length; i++) {
+
+                dots[i].classList.remove('active')
+                // dots[count].classList.add('active');
+
+                if (count == dots.length) {
+                    // dots[0].classList.remove('active')
+                    // dots[i].classList.remove('active')
+                    dots[0].classList.add('active');
+
+                } else {
+                    dots[count].classList.add('active');
+                }
+            }
+
+
+
+            way(ulEle, -liw * count)
+
+        }
+        //点击切换上一张
+        btn2.onclick = function () {
+
+            if (count == 0) {
+                count = lis.length - 1;
+                ulEle.style.left = -liw * count + 'px';
+            }
+            count--;
+
+            for (var i = 0; i < dots.length; i++) {
+
+                dots[i].classList.remove('active')
+                dots[count].classList.add('active');
+            }
+            way(ulEle, -liw * count)
+
+        }
+        //小圆点点击事件
+        for (var i = 0; i < dots.length; i++) {
+            dots[i].index = i;
+            dots[i].onclick = function () {
+                count = this.index;
+                //    if(count==0){
+                //        ulEle.style.left='0px';
+                //        way(ulEle, -liw * count)
+
+                //    }else {
+                // ulEle.style.left = -liw * count + 'px';
+
+
+
+                for (var i = 0; i < dots.length; i++) {  //5=1
+
+                    dots[i].classList.remove('active')
+                    dots[count].classList.add('active');
+                }
+                way(ulEle, -liw * count)
+                //    }
+
+
+            }
+
+
+        }
+
+
+        //缓慢动画
+        function way(ele, leng) {
+            if (ele.offserLeft === leng) {
+                return
+            }
+            if (ele.timer) {
+                clearInterval(ele.timer)
+            }
+            ele.timer = setInterval(function () {
+                var start = ele.offsetLeft;
+                var step = (leng - start) / 10;
+                if (Math.abs(step) < 1) {
+                    if (step < 0) {
+                        step = -1
+                    } else {
+                        step = 1
+                    }
+                }
+                // console.log(step)
+                ele.style.left = start + step + 'px';
+                if (start + step == leng) {
+                    clearInterval(ele.timer);
+                    ele.timer = null;
+
+                }
+
+            }, 1000 / 60);
+
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>
